@@ -18,9 +18,9 @@ public class JpaMain {
     EntityTransaction tx = em.getTransaction();
     tx.begin();
     try {
-      //member 생성
+//      member 생성
 //      Member member = new Member();
-//      member.setId(1L);
+//      member.setId(2L);
 //      member.setName("HelloA");
 //      em.persist(member);
 //---
@@ -96,16 +96,16 @@ public class JpaMain {
 //      System.out.println("=====================");
 
       //JPQL
-      Member memberA = new Member(301L,"memberA");
-      Member memberB = new Member(302L,"memberB");
-      Member memberC = new Member(303L,"memberC");
-      em.persist(memberA);
-      em.persist(memberB);
-      em.persist(memberC);
+//      Member memberA = new Member(301L,"memberA");
+//      Member memberB = new Member(302L,"memberB");
+//      Member memberC = new Member(303L,"memberC");
+//      em.persist(memberA);
+//      em.persist(memberB);
+//      em.persist(memberC);
 
       //jqpl을 중간에서 실행하게되면, 위의 memberA~C 대상들이 플러시 되어, 쿼리를 수행할 수 있도록 함
-      TypedQuery<Member> select_m_from_member_m = em.createQuery("select m from Member m",
-          Member.class);
+//      TypedQuery<Member> select_m_from_member_m = em.createQuery("select m from Member m",
+//          Member.class);
 
       //플러시 모드 옵션
 //      em.setFlushMode(FlushModeType.AUTO);
@@ -118,8 +118,6 @@ public class JpaMain {
       //영속성 컨텍스트의 변경내용을 데이터베이스에 동기화 하는 것이다.
       // 트랜잭션이라는 작업 단위가 중요 -> 커밋 직전에만 동기화 하면 됨.
 
-      tx.commit();
-
       /**
        * select
        *             member0_.id as id1_0_,
@@ -127,12 +125,12 @@ public class JpaMain {
        *         from
        *             Member member0_
        */
-      List<Member> result = em.createQuery("select m from Member as m", Member.class)
-          .getResultList();
+//      List<Member> result = em.createQuery("select m from Member as m", Member.class)
+//          .getResultList();
 
-      for (Member member : result) {
-        System.out.println("member.getName() = " + member.getName());
-      }
+//      for (Member member : result) {
+//        System.out.println("member.getName() = " + member.getName());
+//      }
 
       //member 수정
 //      Member findMember = em.find(Member.class, 1L);
@@ -148,21 +146,48 @@ public class JpaMain {
       // 영속성 컨텍스트가 제공하는 기능을 사용 못함
 
       //영속
-      Member member = em.find(Member.class, 150L);
-      member.setName("AAAAA");
+//      Member member = em.find(Member.class, 150L);
+//      member.setName("AAAAA");
 
       //준영속 상태로 만드는 방법
       //영속성 컨텍스트 안에 있는 member를 준영속 상태로 만듬
-      em.detach(member);
+//      em.detach(member);
 
       //영속성 컨텍스트안에 있는 내용을 통째로 비움
-      em.clear();
+//      em.clear();
 
       //영속성 컨텍스트를 종료함
-      em.close();
+//      em.close();
+      //---
+
+//      Member member = new Member();
+//      member.setId(2L);
+//      member.setUsername("B");
+//      member.setRoleType(RoleType.ADMIN);
+
+      // GenerationType.IDENTITY는 commit 시점에 쿼리를 날리는 일반적인 경우와 달리
+      // persist 호출 시점에 INSERT 쿼리를 날린다.
+//      Member member = new Member();
+//      member.setUsername("C");
+//      System.out.println("--------------");
+//      em.persist(member);
+//      System.out.println("--------------");
+
+      // GenerationType.SEQUENCE는 쿼리는 전송하기 이전에 현재의 시퀀스 값을 얻기 위해 시퀀스 조회 쿼리를 요청함
+//      Member member = new Member();
+//      member.setUsername("C");
+//
+//      System.out.println("-------------");
+//      em.persist(member);
+//      System.out.println("-------------");
+
+      // 위의 문제점은 매 요청마다 시퀀스 및 테이블의 시퀀스를 획득하기 위해, 네트워킹을 수행해야한다는 점이다.
+      // 이러한 문제점을 해결하기 위해, JPA에서는 initialValue와 allocationSize를 작성하여, 시퀀스를 처음에만 조회하고
+      // 재할당 시점에만 반복 조회하도록 함.
+      // initialValue를 1로 그리고 allocationSize를 50으로하면, 최초 한번 조회 후 50번까지는 메모리에서 값을 가져다 입력하고
+      // 51번째 다시 재조회하는 식.
 
 
-      System.out.println("================");
       tx.commit();
       //---
 
