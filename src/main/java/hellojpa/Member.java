@@ -10,7 +10,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -35,20 +37,42 @@ import lombok.Setter;
 //    pkColumnValue = "MEMBER_SEQ", allocationSize = 1)
 public class Member {
 
-  @Id
+
 //  @GeneratedValue(strategy = GenerationType.TABLE,
 //      generator = "MEMBER_SEQ_GENERATOR")
 //  @GeneratedValue(strategy = GenerationType.AUTO)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE,
-      generator = "MEMBER_SEQ_GENERATOR")
-  private String id;
+//  @GeneratedValue(strategy = GenerationType.SEQUENCE,
+//      generator = "MEMBER_SEQ_GENERATOR")
+  @Id @GeneratedValue
+  @Column(name = "MEMBER_ID")
+  private Long id;
 
-  @Column(name = "name")
+  @Column(name = "USERNAME")
   private String username;
 
+//  @Column(name = "TEAM_ID")
+//  private Long teamId;
 
+  @ManyToOne//관계가 무엇인지
+  @JoinColumn(name = "TEAM_ID")//조인하는 컬럼이 무엇인지
+  private Team team;
 
-//  private Integer age;
+  //연관관계 편의 메서드
+  public void changeTeam(Team team) {
+    this.team = team;
+    team.getMembers().add(this);
+  }
+
+  @Override
+  public String toString() {
+    return "Member{" +
+        "id=" + id +
+        ", username='" + username + '\'' +
+        ", team=" + team +
+        '}';
+  }
+
+  //  private Integer age;
 //
 //  @Enumerated(EnumType.STRING)
 //  private RoleType roleType;
@@ -65,4 +89,6 @@ public class Member {
 //  @Lob
 //  private String description;
 //  //Getter, Setter…
+
+
 }

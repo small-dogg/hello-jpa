@@ -4,10 +4,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 public class JpaMain {
 
@@ -188,10 +185,65 @@ public class JpaMain {
       // 51번째 다시 재조회하는 식.
 
 
+      //##연관관계 매핑 기초
+      //객체를 테이블에 맞춰 모델링하면 발생하는 문제
+//      Team team = new Team();
+//      team.setName("TeamA");
+      //영속화하면 ID가 들어옴.
+//      em.persist(team);
+//
+//      Member member = new Member();
+//      member.setUsername("member1");
+      //setTeam이 아닌 setTeamId를 하니.. 객체지향스럽지 못하지..
+//      member.setTeamId(team.getId());
+
+      //객체 지향 모델링
+//      member.setTeam(team);
+//      em.persist(member);
+//
+//      em.flush();
+//      em.clear();
+//
+//      Member findMember = em.find(Member.class, member.getId());
+
+//      Team findTeam = findMember.getTeam();
+//      System.out.println("findTeam = " + findTeam);
+//
+//      //객체 지향 모델링(연관관계 수정)
+//      Team newTeam = em.find(Team.class, 100L);
+//      findMember.setTeam(newTeam);
+
+//      List<Member> members = findMember.getTeam().getMembers();
+//      for (Member member1 : members) {
+//        System.out.println("member1.getUsername() = " + member1.getUsername());//역방향 조회
+//      }
+
+      //양방향 매핑시 가장 많이 하는 실수
+      //주인에 값을 넣지 않고, 주인이 아닌 곳에 값을 넣음
+      //순수한 객체 관계를 고려하면 항상 양쪽다 값을 입력해야 한다.
+      Team team = new Team();
+      team.setName("TeamA");
+      em.persist(team);
+
+      Member member = new Member();
+      member.setUsername("member1");
+      member.changeTeam(team);//**
+      em.persist(member);
+
+
+      team.addMember(member);//**
+
+      em.flush();
+      em.clear();
+
+      Team findTeam = em.find(Team.class, team.getId());
+      List<Member> members = findTeam.getMembers();
+
+      for (Member m : members) {
+        System.out.println("m.getUsername() = " + m.getUsername());
+      }
+
       tx.commit();
-      //---
-
-
     } catch (Exception e) {
       tx.rollback();
     } finally {
