@@ -1,6 +1,5 @@
 package hellojpa;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -185,7 +184,6 @@ public class JpaMain {
       // initialValue를 1로 그리고 allocationSize를 50으로하면, 최초 한번 조회 후 50번까지는 메모리에서 값을 가져다 입력하고
       // 51번째 다시 재조회하는 식.
 
-
       //##연관관계 매핑 기초
       //객체를 테이블에 맞춰 모델링하면 발생하는 문제
 //      Team team = new Team();
@@ -273,17 +271,180 @@ public class JpaMain {
 //      Item findItem = em.find(Item.class, movie.getId());
 //      System.out.println("findItem = " + findItem);
 
-      Member member = new Member();
-      member.setUsername("kim");
-      member.setCreatedBy("kim");
-      member.setCreatedDate(LocalDateTime.now());
+      //MappedSuperclass 적용
+//      Member member = new Member();
+//      member.setUsername("kim");
+//      member.setCreatedBy("kim");
+//      member.setCreatedDate(LocalDateTime.now());
+
+      //##Proxy
+
+//      Member member1 = new Member();
+//      member1.setUsername("member1");
+//      em.persist(member1);
+
+//      Member member2 = new Member();
+//      member2.setUsername("member2");
+//      em.persist(member2);
+
+//      em.flush();
+//      em.clear();
+
+//      em.getReference(Member.class, member1.getId());
+//      System.out.println("member.getClass() = " + member1.getClass());
+//      System.out.println("member.getId() = " + member1.getId());
+//      System.out.println("member.getUsername() = " + member1.getUsername());
+
+//      Member m1 = em.find(Member.class, member1.getId());
+//      Member m2 = em.getReference(Member.class, member2.getId());
+
+//      logic(m1, m2);
+
+//      Member m1 = em.find(Member.class, member1.getId());
+//      System.out.println("m1.getClass() = " + m1.getClass());
+//
+//      Member reference = em.getReference(Member.class, member1.getId());
+//      System.out.println("reference.getClass() = " + reference.getClass());
+//
+//      //JPA는 한 트랜잭션안에서 동일한 데이터에 대해서 항상 동일성을 보장해줌.
+//      //reference는 영속성 컨텍스트에 이미 실제 데이터가있으면 실 데이터를 반환해줌.
+//      System.out.println("a == a: " + (m1 == reference));
+
+//      Member referenceMember = em.getReference(Member.class, member1.getId());
+//      System.out.println("referenceMember.getClass() = " + referenceMember.getClass());
+//
+//      Member findMember = em.find(Member.class, member1.getId());
+//      System.out.println("findMember.getClass() = " + findMember.getClass());
+//
+//      //위에서 reference를 호출한 객체가 있으면 이후 find로 호출한 동일 대상도 Proxy로 맵핑해줌
+//      //동일성을 보장해주어야하기때문에...
+//      System.out.println("a == a: " + (referenceMember == findMember));
+
+//      Member refMember = em.getReference(Member.class, member1.getId());
+//      System.out.println("refMember.getClass() = " + refMember.getClass());//Proxy
+
+//      em.detach(refMember);
+      // 또는
+//      em.close();
+      // 또는
+//      em.clear();
+
+      //영속성 컨텍스트가 더이상 관리하지 않아, Proxy 객체를 더이상사용할 수 없음
+//      System.out.println("refMember.getUsername() = " + refMember.getUsername());
+
+//      Member refMember = em.getReference(Member.class, member1.getId());
+//      System.out.println("refMember.getClass() = " + refMember.getClass());//Proxy
+
+      //프록시 인스턴스의 초기화 여부 확인
+//      System.out.println(emf.getPersistenceUnitUtil().isLoaded(refMember));
+//
+//      refMember.getUsername();
+//      System.out.println(emf.getPersistenceUnitUtil().isLoaded(refMember));
+
+      //프록시 클래스 확인 방법
+//      System.out.println("refMember.getClass() = " + refMember.getClass());
+
+      //프록시 강제 초기화 (참고) Hibernate에서 제공하는거임. JPA는 강제 초기화가 없음.
+//      Hibernate.initialize(refMember);
+
+      //### 즉시 로딩과 지연 로딩
+
+      //즉시 로딩 및 지연로딩 Member 클래스 확인.
+//      Team team1 = new Team();
+//      team1.setName("teamA");
+//      em.persist(team1);
+//      Team team2 = new Team();
+//      team2.setName("teamB");
+//      em.persist(team2);
+//
+//      Member member1 = new Member();
+//      member1.setUsername("member1");
+//      member1.setTeam(team1);
+//      em.persist(member1);
+//
+//      Member member2 = new Member();
+//      member2.setUsername("member1");
+//      member2.setTeam(team2);
+//      em.persist(member2);
+//
+//      em.flush();
+//      em.clear();
+
+//      Member m = em.find(Member.class, member1.getId());
+//
+//      System.out.println("m.getTeam().getClass() = " + m.getTeam().getClass());
+//
+//      System.out.println("=============================");
+//      m.getTeam().getName();//지연 로딩의 경우 초기화
+//      System.out.println("=============================");
+
+//      List<Member> members = em.createQuery("select m from Member m", Member.class)
+//          .getResultList();
+
+      //SQL 번역시
+      //1. select * from Member
+      //2. select * from Team where TEAM_ID = xxx
+
+      //이후에 배울 fetch join 예시
+//      List<Member> members = em.createQuery("select m from Member m join fetch m.team",
+//          Member.class).getResultList();
+
+
+      // 영속성 전이 Cascade
+      // 소유자가 하나, 단일 소유자일 때 사용. 즉, 자식의 부모가 딱 하나일때.
+//      Child child1 = new Child();
+//      child1.setName("child1");
+//      Child child2 = new Child();
+//      child2.setName("child2");
+//
+//      Parent parent = new Parent();
+//      parent.addChild(child1);
+//      parent.addChild(child2);
+
+      //모두 영속화하기 위해 3가지를 모두 persist 메서드를 사용해야한다. ->Parent 클래스에 cascade
+//      em.persist(child1);
+//      em.persist(child2);
+//      em.persist(parent);
+
+      // 고아 객체: 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제
+      // 참조하는 곳이 하나일 때 사용해야함!
+      // 부모를 제거하면 자식도 함께 제거됨.
+      Child child1 = new Child();
+      child1.setName("child1");
+      Child child2 = new Child();
+      child2.setName("child2");
+
+      Parent parent = new Parent();
+      parent.addChild(child1);
+      parent.addChild(child2);
+
+      em.persist(child1);
+      em.persist(child1);
+      em.persist(parent);
+
+      em.flush();
+      em.clear();
+
+      Parent findParent = em.find(Parent.class, parent.getId());
+//      findParent.getChildList().remove(0);//delete * from Child where CHILD_ID=getChildList(0)
+//      em.remove(findParent);//findParent의 Children에 해당하는 Child도 모두 제거됨
+
+
       tx.commit();
     } catch (Exception e) {
       tx.rollback();
+      e.printStackTrace();
     } finally {
       em.close();
     }
     emf.close();
+
+  }
+
+  private static void logic(Member m1, Member m2) {
+//    System.out.println("m1 == m2 : " + (m1.getClass() == m2.getClass()));
+    System.out.println("m1 == m2 : " + (m1 instanceof Member));
+    System.out.println("m1 == m2 : " + (m2 instanceof Member));
 
   }
 }

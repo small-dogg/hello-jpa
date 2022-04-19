@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,10 +24,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(
-    name = "MEMBER_SEQ_GENERATOR",
-    sequenceName = "MEMBER_SEQ", //매핑할 데이터베이스 시퀀스 이름
-    initialValue = 1, allocationSize = 1)
+//@SequenceGenerator(
+//    name = "MEMBER_SEQ_GENERATOR",
+//    sequenceName = "MEMBER_SEQ", //매핑할 데이터베이스 시퀀스 이름
+//    initialValue = 1, allocationSize = 1)
 //@TableGenerator
 //    (name = "MEMBER_SEQ_GENERATOR",
 //    table = "MY_SEQUENCES",
@@ -47,8 +48,10 @@ public class Member extends BaseEntity{
   @Column(name = "USERNAME")
   private String username;
 
-  @ManyToOne
-  @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)//읽기 전용
+//  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
+//  @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)//읽기 전용
+  @JoinColumn(name = "TEAM_ID")
   private Team team;
 
   @OneToOne
@@ -66,7 +69,7 @@ public class Member extends BaseEntity{
 //  private Long teamId;
 
 //  @ManyToOne//관계가 무엇인지
-//  @JoinColumn(name = "TEAM_ID")//조인하는 컬럼이 무엇인지ㄷ
+//  @JoinColumn(name = "TEAM_ID")//조인하는 컬럼이 무엇인지
 //  private Team team;
 
   //연관관계 편의 메서드
