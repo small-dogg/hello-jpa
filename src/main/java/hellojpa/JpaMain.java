@@ -221,28 +221,38 @@ public class JpaMain {
       //양방향 매핑시 가장 많이 하는 실수
       //주인에 값을 넣지 않고, 주인이 아닌 곳에 값을 넣음
       //순수한 객체 관계를 고려하면 항상 양쪽다 값을 입력해야 한다.
-      Team team = new Team();
-      team.setName("TeamA");
-      em.persist(team);
+//      Team team = new Team();
+//      team.setName("TeamA");
+//      em.persist(team);
+//
+//      Member member = new Member();
+//      member.setUsername("member1");
+//      member.changeTeam(team);//**
+//      em.persist(member);
+//
+//
+//      team.addMember(member);//**
+//
+//      em.flush();
+//      em.clear();
+//
+//      Team findTeam = em.find(Team.class, team.getId());
+//      List<Member> members = findTeam.getMembers();
+//
+//      for (Member m : members) {
+//        System.out.println("m.getUsername() = " + m.getUsername());
+//      }
 
       Member member = new Member();
       member.setUsername("member1");
-      member.changeTeam(team);//**
+
       em.persist(member);
 
+      Team team = new Team();
+      team.setName("teamA");
 
-      team.addMember(member);//**
-
-      em.flush();
-      em.clear();
-
-      Team findTeam = em.find(Team.class, team.getId());
-      List<Member> members = findTeam.getMembers();
-
-      for (Member m : members) {
-        System.out.println("m.getUsername() = " + m.getUsername());
-      }
-
+      team.getMembers().add(member);
+      em.persist(team);
       tx.commit();
     } catch (Exception e) {
       tx.rollback();
