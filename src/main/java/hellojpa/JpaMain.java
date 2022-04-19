@@ -1,5 +1,6 @@
 package hellojpa;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -243,16 +244,39 @@ public class JpaMain {
 //        System.out.println("m.getUsername() = " + m.getUsername());
 //      }
 
+//      Member member = new Member();
+//      member.setUsername("member1");
+//
+//      em.persist(member);
+//
+//      Team team = new Team();
+//      team.setName("teamA");
+//
+//      team.getMembers().add(member);
+//      em.persist(team);
+
+//      Movie movie = new Movie();
+//      movie.setActor("bbb");
+//      movie.setDirector("aaa");
+//      movie.setName("바람과함께사라지다");
+//      movie.setPrice(10000);
+//
+//      em.persist(movie);
+//
+//      em.flush();
+//      em.clear();
+//
+//      Movie findMovie = em.find(Movie.class, movie.getId());
+//      System.out.println("findMovie = " + findMovie);
+//
+//      //TABLE_PER_CLASS 의 문제점
+//      Item findItem = em.find(Item.class, movie.getId());
+//      System.out.println("findItem = " + findItem);
+
       Member member = new Member();
-      member.setUsername("member1");
-
-      em.persist(member);
-
-      Team team = new Team();
-      team.setName("teamA");
-
-      team.getMembers().add(member);
-      em.persist(team);
+      member.setUsername("kim");
+      member.setCreatedBy("kim");
+      member.setCreatedDate(LocalDateTime.now());
       tx.commit();
     } catch (Exception e) {
       tx.rollback();
