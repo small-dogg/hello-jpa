@@ -1,7 +1,10 @@
 package hellojpa;
 
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 import java.time.LocalDateTime;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
 import lombok.Getter;
 import lombok.Setter;
 

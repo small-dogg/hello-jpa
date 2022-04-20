@@ -409,26 +409,82 @@ public class JpaMain {
       // 고아 객체: 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제
       // 참조하는 곳이 하나일 때 사용해야함!
       // 부모를 제거하면 자식도 함께 제거됨.
-      Child child1 = new Child();
-      child1.setName("child1");
-      Child child2 = new Child();
-      child2.setName("child2");
+//      Child child1 = new Child();
+//      child1.setName("child1");
+//      Child child2 = new Child();
+//      child2.setName("child2");
+//
+//      Parent parent = new Parent();
+//      parent.addChild(child1);
+//      parent.addChild(child2);
+//
+//      em.persist(child1);
+//      em.persist(child1);
+//      em.persist(parent);
+//
+//      em.flush();
+//      em.clear();
+//
+//      Parent findParent = em.find(Parent.class, parent.getId());
+//      findParent.getChildList().remove(0);//delete * from Child where CHILD_ID=getChildList(0)
+//      em.remove(findParent);//findParent의 Children에 해당하는 Child도 모두 제거됨
 
-      Parent parent = new Parent();
-      parent.addChild(child1);
-      parent.addChild(child2);
+      //값 타입
 
-      em.persist(child1);
-      em.persist(child1);
-      em.persist(parent);
+//      Address address = new Address("city", "street", "10000");
+//
+//      Member member1 = new Member();
+//      member1.setUsername("member1");
+//      member1.setHomeAddress(address);
+//      em.persist(member1);
+//
+//
+//      Address address2 = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+//
+//      Member member2 = new Member();
+//      member2.setUsername("member1");
+//      member2.setHomeAddress(address1);
+//      member2.setHomeAddress(address2);
+//      em.persist(member2);
+      //임베디드 타입처럼 직접 정의한 값 타입과 같은 객체를 같이 사용하면 공유 참조로 인해 업데이트문이 2번 작성됨.
+      // 참조값을 직접 대입하기 때문..-> 값을 복사해서 사용해야함
+      //불변객체로 만드는 것이 일반적 -> setter를 없애거나, private으로 접근제어자 수정
+//      member1.getHomeAddress().setCity("Suwon");
+//      Address newAddress = new Address("Suwon", address.getStreet(), address.getZipcode());
+//      member2.setHomeAddress(newAddress);
+      Member member = new Member();
+      member.setUsername("memeber1");
+      member.setHomeAddress(new Address("homeCity","street","10000"));
+
+      member.getFavoirteFoods().add("치킨");
+      member.getFavoirteFoods().add("족발");
+      member.getFavoirteFoods().add("피자");
+
+      member.getAddressHistory().add(new AddressEntity("old1","street","10000"));
+      member.getAddressHistory().add(new AddressEntity("old2","street","10000"));
+
+      em.persist(member);
 
       em.flush();
       em.clear();
 
-      Parent findParent = em.find(Parent.class, parent.getId());
-//      findParent.getChildList().remove(0);//delete * from Child where CHILD_ID=getChildList(0)
-//      em.remove(findParent);//findParent의 Children에 해당하는 Child도 모두 제거됨
+      System.out.println("-------------START-----------------");
+      Member findMember = em.find(Member.class, member.getId());
+      System.out.println("-------------START-----------------");
+      for (String f : findMember.getFavoirteFoods()) {
+        System.out.println(f);
+      }
+      for (AddressEntity a : findMember.getAddressHistory()){
+        System.out.println(a.getAddress().getCity());
+      }
 
+      //값 타입 이기때문에 변경하려면 뺏다가 넣어야함.
+      //cascade + 고아객체 처럼 동작함.
+      findMember.getFavoirteFoods().remove("치킨");
+      findMember.getFavoirteFoods().add("한식");
+
+      findMember.getAddressHistory().remove(new AddressEntity("old1","street","10000"));
+      findMember.getAddressHistory().add(new AddressEntity("newCity1","street","10000"));
 
       tx.commit();
     } catch (Exception e) {

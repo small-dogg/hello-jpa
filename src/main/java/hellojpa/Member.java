@@ -1,8 +1,14 @@
 package hellojpa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,6 +63,23 @@ public class Member extends BaseEntity{
   @OneToOne
   @JoinColumn(name = "LOCKER_ID")
   private Locker locker;
+
+  @Embedded
+  private Period period;
+
+  @Embedded
+  private Address homeAddress;
+
+  @ElementCollection
+  @CollectionTable(name = "FAVORITE_FOOD", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+  @Column(name="FOOD_NAME")
+  private Set<String> favoirteFoods = new HashSet<>();
+
+//  @ElementCollection
+//  @CollectionTable(name = "ADDRESS", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name="MEMBER_ID")
+  private List<AddressEntity> addressHistory = new ArrayList<>();
 
 //  @ManyToMany
 //  @JoinTable(name = "MEMBER_PRODUCT")
