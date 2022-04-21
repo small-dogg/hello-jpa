@@ -5,6 +5,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public class JpaMain {
 
@@ -452,39 +455,70 @@ public class JpaMain {
 //      member1.getHomeAddress().setCity("Suwon");
 //      Address newAddress = new Address("Suwon", address.getStreet(), address.getZipcode());
 //      member2.setHomeAddress(newAddress);
-      Member member = new Member();
-      member.setUsername("memeber1");
-      member.setHomeAddress(new Address("homeCity","street","10000"));
+//      Member member = new Member();
+//      member.setUsername("memeber1");
+//      member.setHomeAddress(new Address("homeCity","street","10000"));
+//
+//      member.getFavoirteFoods().add("치킨");
+//      member.getFavoirteFoods().add("족발");
+//      member.getFavoirteFoods().add("피자");
+//
+//      member.getAddressHistory().add(new AddressEntity("old1","street","10000"));
+//      member.getAddressHistory().add(new AddressEntity("old2","street","10000"));
+//
+//      em.persist(member);
+//
+//      em.flush();
+//      em.clear();
+//
+//      System.out.println("-------------START-----------------");
+//      Member findMember = em.find(Member.class, member.getId());
+//      System.out.println("-------------START-----------------");
+//      for (String f : findMember.getFavoirteFoods()) {
+//        System.out.println(f);
+//      }
+//      for (AddressEntity a : findMember.getAddressHistory()){
+//        System.out.println(a.getAddress().getCity());
+//      }
+//
+//      //값 타입 이기때문에 변경하려면 뺏다가 넣어야함.
+//      //cascade + 고아객체 처럼 동작함.
+//      findMember.getFavoirteFoods().remove("치킨");
+//      findMember.getFavoirteFoods().add("한식");
+//
+//      findMember.getAddressHistory().remove(new AddressEntity("old1","street","10000"));
+//      findMember.getAddressHistory().add(new AddressEntity("newCity1","street","10000"));
 
-      member.getFavoirteFoods().add("치킨");
-      member.getFavoirteFoods().add("족발");
-      member.getFavoirteFoods().add("피자");
+      //## 객체지향 쿼리 언어1 - 기본 문법
 
-      member.getAddressHistory().add(new AddressEntity("old1","street","10000"));
-      member.getAddressHistory().add(new AddressEntity("old2","street","10000"));
+      //JPQL
+//      List<Member> resultList = em.createQuery(
+//          "SELECT m FROM Member m WHERE m.username like '%kim%'",
+//          Member.class
+//      ).getResultList();
 
-      em.persist(member);
+      //Criteria - 다루기 어려움
+      //객체 지향적으로 쿼리를 작성할 수 있고, 구문 오류를 방지할 수 있음
+      //동적쿼리를 작성하기 용이함
+      //유지보수가 어려움.. 가독성이 떨어짐
+//      CriteriaBuilder cb = em.getCriteriaBuilder();
+//      CriteriaQuery<Member> query = cb.createQuery(Member.class);
 
-      em.flush();
-      em.clear();
+      //루트 클래스 (조회를 시작할 클래스)
+//      Root<Member> m = query.from(Member.class);
 
-      System.out.println("-------------START-----------------");
-      Member findMember = em.find(Member.class, member.getId());
-      System.out.println("-------------START-----------------");
-      for (String f : findMember.getFavoirteFoods()) {
-        System.out.println(f);
-      }
-      for (AddressEntity a : findMember.getAddressHistory()){
-        System.out.println(a.getAddress().getCity());
-      }
+      //쿼리 생성
+//      CriteriaQuery<Member> cq = query.select(m).where(cb.equal(m.get("username"), "kim"));
+//      List<Member> resultList = em.createQuery(cq).getResultList();
 
-      //값 타입 이기때문에 변경하려면 뺏다가 넣어야함.
-      //cascade + 고아객체 처럼 동작함.
-      findMember.getFavoirteFoods().remove("치킨");
-      findMember.getFavoirteFoods().add("한식");
+      //NativeQuery
+//      List select_member_id_from_member = em.createNativeQuery("select MEMBER_ID from MEMBER", ㅡ드ㅠㄷㄱ)
+//          .getResultList();
 
-      findMember.getAddressHistory().remove(new AddressEntity("old1","street","10000"));
-      findMember.getAddressHistory().add(new AddressEntity("newCity1","street","10000"));
+      //flush -> commit, query 날라갈 때 flush가 기본적으로 동작함
+
+
+      //**
 
       tx.commit();
     } catch (Exception e) {
